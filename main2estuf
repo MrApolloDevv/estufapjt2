@@ -1,0 +1,61 @@
+#include <DHT.h>
+
+#define DHTPIN 2   
+#define DHTTYPE DHT22  
+
+#define RELE_TEMP 3      // rele para controle de temperatura
+#define RELE_UMID 4      // rele para controle de umidade
+#define RELE_LUZ 5       // rele para controle de iluminacao UV
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(RELE_TEMP, OUTPUT);
+  pinMode(RELE_UMID, OUTPUT);
+  pinMode(RELE_LUZ, OUTPUT);
+  dht.begin();
+}
+
+void loop() {
+  float temp = dht.readTemperature(); 
+  float umid = dht.readHumidity();    
+
+
+  Serial.print("Temperatura: ");
+  Serial.print(temp);
+  Serial.print(" °C ");
+  Serial.print("Umidade: ");
+  Serial.print(umid);
+  Serial.println(" %");
+
+
+  if (temp > 30) { 
+    digitalWrite(RELE_TEMP, HIGH); 
+
+  } 
+  else {
+    digitalWrite(RELE_TEMP, LOW); 
+
+  }
+
+  // Controle de umidade
+  if (umid < 40) { 
+    digitalWrite(RELE_UMID, HIGH); 
+  } 
+  else {
+    digitalWrite(RELE_UMID, LOW); 
+  }
+
+  // Controle de iluminação UV
+  if (hour() >= 6 && hour() <= 18) { 
+    digitalWrite(RELE_LUZ, HIGH); 
+  } 
+  else {
+    digitalWrite(RELE_LUZ, LOW); 
+  }
+
+
+
+  delay(5000);
+}
